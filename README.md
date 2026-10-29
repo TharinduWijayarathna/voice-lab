@@ -13,9 +13,22 @@ Private, offline, and every clip is yours to keep.</p>
   <img alt="Kokoro-82M, Apache-2.0" src="https://img.shields.io/badge/voice-Kokoro--82M-E0242F">
 </p>
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot-dark.png">
+    <img src="docs/screenshot-light.png" width="900" alt="VoiceLab: the voice list on the left, the script and clips in the middle, and the sound settings on the right, on red Liquid Glass">
+  </picture>
+</p>
+
 A small Mac app for making voice-over clips with the Kokoro voice model. Everything runs on your Mac: no account, no internet once it's installed, and the clips are yours to use (Kokoro-82M is Apache-2.0).
 
-The window is native SwiftUI with Liquid Glass: a voice list in the sidebar, the script and your clips on glass panels over a soft red glow, and the sound settings in the inspector. It follows your Mac's light or dark appearance.
+The window is native SwiftUI with Liquid Glass: the voice list in the sidebar, then the script, your clips and the sound settings on glass panels over a soft red glow. It follows your Mac's light or dark appearance.
+
+## Screenshots
+
+| Light | Dark |
+|---|---|
+| <img src="docs/screenshot-light.png" alt="VoiceLab in light mode"> | <img src="docs/screenshot-dark.png" alt="VoiceLab in dark mode"> |
 
 ## What you need
 
@@ -43,10 +56,9 @@ Run `install.command` again any time to update the app after changing its code h
 - **Clips**: every clip is saved as a WAV file in `Documents › VoiceLab`, numbered in the order you made them.
   - Click the waveform to jump to that point. ⌘L plays the latest clip.
   - Click a title to rename the clip (the file is renamed too).
-  - **Use again** brings that clip's script and settings back into the editor.
-  - **Delete** moves the file to the Bin. Right-click a clip for all of these.
-- **Sound** (inspector, toggle it from the toolbar):
-  - **Speed** and **Pause after each sentence** change how it's read. **Normal** resets the speed.
+  - Hover over a clip for its buttons: **Use again** (↩) brings its script and settings back into the editor, **Show in Finder** (folder), and **Delete** (bin) moves the file to the Bin. Right-click a clip for the same things.
+- **Sound** (the panel on the right):
+  - **Speed** and **Pause after each sentence** change how it's read. The round ↺ button next to a value puts it back to normal.
   - **Blend with another voice** mixes two voices into a new one. For example, Heart with 30% Emma.
   - **Pronunciation** fixes words the voice says wrong. Write the word as it sounds (`ee-kwate`), or give the exact sounds between slashes (`/kəkˈɔːɹoʊ/`). The play button tries it out.
 
@@ -67,6 +79,6 @@ To remove it completely, delete the app and that Application Support folder.
 - `engine/`: the voice engine in Python, which the app starts in the background.
   - `engine.py`: the Kokoro model, the voice list, pronunciations and the clips.
   - `server.py`: a private server for the app (this Mac only, `127.0.0.1`). It quits when the app quits.
-- `icon/`: the app icon. `docs/`: the README icon.
+- `icon/`: the app icon. `docs/`: the README icon and screenshots.
 
 To run it from Xcode or Terminal without installing: run `install.command` once (for the Python engine and the model), then `cd mac && swift run`. The app finds `engine/server.py` next to it.
