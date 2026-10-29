@@ -13,13 +13,6 @@ Private, offline, and every clip is yours to keep.</p>
   <img alt="Kokoro-82M, Apache-2.0" src="https://img.shields.io/badge/voice-Kokoro--82M-E0242F">
 </p>
 
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot-dark.png">
-    <img src="docs/screenshot-light.png" width="900" alt="VoiceLab: the voice list on the left, the script and clips in the middle, and the sound settings on the right, on red Liquid Glass">
-  </picture>
-</p>
-
 A small Mac app for making voice-over clips with the Kokoro voice model. Everything runs on your Mac: no account, no internet once it's installed, and the clips are yours to use (Kokoro-82M is Apache-2.0).
 
 The window is native SwiftUI with Liquid Glass: the voice list in the sidebar, then the script, your clips and the sound settings on glass panels over a soft red glow. It follows your Mac's light or dark appearance.
