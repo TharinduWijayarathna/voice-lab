@@ -95,7 +95,10 @@ struct VoiceRow: View {
                         Image(systemName: on ? "stop.fill" : "play.fill").font(.caption)
                     }
                 }
-                .buttonStyle(.borderless)
+                .buttonStyle(.glass)
+                .buttonBorderShape(.circle)
+                .controlSize(.small)
+                .foregroundStyle(on ? Brand.red : Color.primary)
                 .help("Hear \(voice.name)")
                 .accessibilityLabel("Hear \(voice.name)")
             }

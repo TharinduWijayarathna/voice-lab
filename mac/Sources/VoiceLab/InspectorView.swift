@@ -13,15 +13,14 @@ struct InspectorView: View {
                 Divider()
 
                 VStack(alignment: .leading, spacing: 6) {
-                    ValueRow(title: "Speed", value: String(format: "%.2f×", studio.settings.speed))
+                    ValueRow(title: "Speed", value: String(format: "%.2f×", studio.settings.speed),
+                             canReset: abs(studio.settings.speed - 1) > 0.001,
+                             resetHelp: "Back to normal speed") { studio.settings.speed = 1 }
                     Slider(value: stepped($studio.settings.speed, 0.05), in: 0.5...1.5)
                     HStack {
                         Text("Slower")
                         Spacer()
-                        Button("Normal") { studio.settings.speed = 1 }
-                            .buttonStyle(.borderless)
-                            .foregroundStyle(.secondary)
-                            .help("Back to normal speed")
+                        Text("Normal")
                         Spacer()
                         Text("Faster")
                     }
@@ -30,7 +29,9 @@ struct InspectorView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 6) {
-                    ValueRow(title: "Pause after each sentence", value: String(format: "%.2f s", studio.settings.pause))
+                    ValueRow(title: "Pause after each sentence", value: String(format: "%.2f s", studio.settings.pause),
+                             canReset: abs(studio.settings.pause - 0.25) > 0.001,
+                             resetHelp: "Back to the usual pause") { studio.settings.pause = 0.25 }
                     Slider(value: stepped($studio.settings.pause, 0.05), in: 0...1)
                 }
 
@@ -86,13 +87,30 @@ struct InspectorView: View {
 private struct ValueRow: View {
     let title: String
     let value: String
+    var canReset = false
+    var resetHelp = "Reset"
+    var reset: () -> Void = {}
 
     var body: some View {
-        HStack(alignment: .firstTextBaseline) {
+        HStack(spacing: 6) {
             Text(title).fontWeight(.semibold)
             Spacer()
             Text(value).foregroundStyle(.secondary).monospacedDigit()
+            if canReset {
+                Button(action: reset) {
+                    Image(systemName: "arrow.counterclockwise")
+                        .font(.system(size: 10, weight: .semibold))
+                        .frame(width: 12, height: 12)
+                }
+                .buttonStyle(.glass)
+                .buttonBorderShape(.circle)
+                .controlSize(.mini)
+                .foregroundStyle(.primary)
+                .help(resetHelp)
+                .accessibilityLabel(resetHelp)
+            }
         }
+        .frame(height: 22)
     }
 }
 
@@ -142,8 +160,9 @@ private struct Pronunciations: View {
                 Button("Add a word", systemImage: "plus") {
                     studio.lexicon.append(Word(word: "", say: ""))
                 }
-                .buttonStyle(.borderless)
-                .foregroundStyle(Brand.red)
+                .buttonStyle(.glass)
+                .controlSize(.small)
+                .foregroundStyle(.primary)
             }
             Text("For names the voice says wrong. Write how it sounds (ee-kwate), or give exact sounds between slashes.")
                 .font(.callout)
@@ -157,15 +176,21 @@ private struct Pronunciations: View {
                         .textFieldStyle(.roundedBorder)
                         .font(.system(.body, design: .serif))
                     Button { Task { await studio.testWord(w) } } label: {
-                        Image(systemName: studio.playing == .word(w.id) ? "speaker.wave.2.fill" : "play.fill")
+                        Image(systemName: studio.playing == .word(w.id) ? "speaker.wave.2.circle.fill" : "play.circle.fill")
+                            .font(.system(size: 17))
                     }
                     .buttonStyle(.borderless)
+                    .foregroundStyle(studio.playing == .word(w.id) ? Brand.red : Color.secondary)
                     .help("Hear it")
+                    .accessibilityLabel("Hear \(w.word)")
                     Button { studio.lexicon.removeAll { $0.id == w.id } } label: {
-                        Image(systemName: "xmark")
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 17))
                     }
                     .buttonStyle(.borderless)
+                    .foregroundStyle(.tertiary)
                     .help("Remove")
+                    .accessibilityLabel("Remove \(w.word)")
                 }
             }
         }

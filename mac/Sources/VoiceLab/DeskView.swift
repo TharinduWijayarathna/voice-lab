@@ -239,29 +239,35 @@ struct TakeRow: View {
                 .frame(height: 34)
 
                 HStack(spacing: 6) {
-                    Text(studio.meta(for: take))
-                        .foregroundStyle(.secondary)
-                    if saidMore {
-                        Text("“\(take.text)”")
-                            .font(.system(.callout, design: .serif))
-                            .italic()
+                    HStack(spacing: 6) {
+                        Text(studio.meta(for: take))
                             .foregroundStyle(.secondary)
-                            .truncationMode(.tail)
+                        if saidMore {
+                            Text("“\(take.text)”")
+                                .font(.system(.callout, design: .serif))
+                                .italic()
+                                .foregroundStyle(.secondary)
+                                .truncationMode(.tail)
+                        }
                     }
+                    .help(take.text)
                     Spacer(minLength: 8)
                     if hover {
-                        HStack(spacing: 2) {
-                            Button("Use again") { studio.reuse(take) }
-                            Button("Show in Finder") { studio.reveal(take) }
-                            Button("Delete", role: .destructive) { Task { await studio.delete(take) } }
+                        GlassEffectContainer(spacing: 6) {
+                            HStack(spacing: 6) {
+                                RowAction(title: "Use again", symbol: "arrow.uturn.backward") { studio.reuse(take) }
+                                RowAction(title: "Show in Finder", symbol: "folder") { studio.reveal(take) }
+                                RowAction(title: "Move to Bin", symbol: "trash", destructive: true) {
+                                    Task { await studio.delete(take) }
+                                }
+                            }
                         }
-                        .buttonStyle(.borderless)
                         .transition(.opacity)
                     }
                 }
                 .font(.callout)
                 .lineLimit(1)
-                .help(take.text)
+                .frame(height: 26)  // room for the buttons, so the row doesn't jump when they appear
             }
         }
         .padding(.vertical, 12)
@@ -287,6 +293,28 @@ struct TakeRow: View {
         editing = false
         let title = draft
         Task { await studio.rename(take, to: title) }
+    }
+}
+
+/// A small round glass button with an icon, for actions on a clip.
+struct RowAction: View {
+    let title: String
+    let symbol: String
+    var destructive = false
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.system(size: 11, weight: .semibold))
+                .frame(width: 14, height: 14)
+        }
+        .buttonStyle(.glass)
+        .buttonBorderShape(.circle)
+        .controlSize(.small)
+        .foregroundStyle(destructive ? Brand.red : Color.primary)
+        .help(title)
+        .accessibilityLabel(title)
     }
 }
 
