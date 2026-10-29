@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VoiceLab</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- Voices -->
+  <aside class="voices" aria-label="Voices">
+    <div class="voices-head">
+      <h1 class="brand"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="9" width="2.4" height="6" rx="1.2"/><rect x="7.4" y="5" width="2.4" height="14" rx="1.2"/><rect x="11.8" y="2" width="2.4" height="20" rx="1.2"/><rect x="16.2" y="6.5" width="2.4" height="11" rx="1.2"/><rect x="20.6" y="10" width="2.4" height="4" rx="1.2"/></svg>VoiceLab</h1>
+      <label class="search"><span class="sr">Find a voice</span>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M13 13l4 4"/></svg>
+        <input id="find" type="search" placeholder="Find a voice" autocomplete="off" spellcheck="false">
+      </label>
+    </div>
+    <div class="voice-list" id="voiceList"></div>
+  </aside>
+
+  <!-- Script and clips -->
+  <main class="desk">
+    <section class="page" aria-label="Script">
+      <div class="script-wrap" id="scriptWrap">
+        <div class="gutter" id="gutter" aria-hidden="true"></div>
+        <textarea id="script" spellcheck="true" placeholder="Type or paste what you want said."></textarea>
+      </div>
+      <div class="bar">
+        <div class="seg" role="radiogroup" aria-label="How to cut the script">
+          <button role="radio" data-split="0" aria-checked="true">One clip</button>
+          <button role="radio" data-split="1" aria-checked="false">A clip per line</button>
+        </div>
+        <span class="estimate" id="estimate"></span>
+        <button class="make" id="make" disabled>
+          <span class="tally" aria-hidden="true"></span><span id="makeLabel">Loading the voice…</span><kbd>⌘↵</kbd>
+        </button>
+      </div>
+    </section>
+
+    <section class="reel" aria-label="Clips">
+      <header class="reel-head">
+        <h2>Clips <span id="count"></span></h2>
+        <button class="quiet" id="openFolder">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2.5 5.5a1 1 0 0 1 1-1h4l1.6 1.8h7.4a1 1 0 0 1 1 1v8.2a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1z"/></svg>
+          Show in Finder</button>
+      </header>
+      <div id="notice" class="notice" hidden></div>
+      <ol class="takes" id="takes"></ol>
+      <div class="empty" id="empty" hidden>
+        <p>Each clip you make lands here and is saved as a WAV file in <button class="link" id="emptyFolder"></button>.</p>
+        <p class="hint">Tip: “A clip per line” turns a whole script into separate files, one per line, ready for your edit.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Sound and pronunciation -->
+  <aside class="inspector" aria-label="Sound">
+    <section class="current">
+      <p class="current-group" id="curGroup">&nbsp;</p>
+      <p class="current-name" id="curName">&nbsp;</p>
+      <button class="sample" id="curSample" disabled>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path class="i-play" d="M6.5 4.5v11l9-5.5z"/></svg>
+        Hear a sample</button>
+    </section>
+
+    <section class="ctl">
+      <div class="row"><label for="speed">Speed</label><output id="speedOut" for="speed"></output></div>
+      <input type="range" id="speed" min="0.5" max="1.5" step="0.05" value="1">
+      <div class="ticks"><span>Slower</span><span>Normal</span><span>Faster</span></div>
+    </section>
+
+    <section class="ctl">
+      <div class="row"><label for="pause">Pause after each sentence</label><output id="pauseOut" for="pause"></output></div>
+      <input type="range" id="pause" min="0" max="1" step="0.05" value="0.25">
+    </section>
+
+    <section class="ctl">
+      <div class="row"><label for="mixVoice">Blend with another voice</label></div>
+      <select id="mixVoice"><option value="">No blend</option></select>
+      <div class="mixamt" id="mixAmt" hidden>
+        <input type="range" id="mix" min="0.05" max="0.7" step="0.05" value="0.3" aria-label="How much of the second voice">
+        <output id="mixOut" for="mix"></output>
+      </div>
+    </section>
+
+    <section class="lex">
+      <div class="row"><h2>Pronunciation</h2><button class="quiet" id="addWord">Add a word</button></div>
+      <p class="help">For names the voice says wrong. Write how it sounds (<i>sosh-uh-bull</i>), or give exact sounds between slashes.</p>
+      <ul id="lexList"></ul>
+    </section>
+
+    <section class="folder">
+      <h2>Clips folder</h2>
+      <p id="folderPath" class="path"></p>
+      <button class="quiet" id="changeFolder" hidden>Change…</button>
+    </section>
+  </aside>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="app.js"></script>
+</body>
+</html>
