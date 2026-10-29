@@ -1,6 +1,34 @@
-# VoiceLab
+<p align="center">
+  <img src="docs/icon-256.png" width="128" height="128" alt="VoiceLab icon">
+</p>
+
+<h1 align="center">VoiceLab</h1>
+
+<p align="center"><b>Natural voice-overs, made on your Mac.</b><br>
+Private, offline, and every clip is yours to keep.</p>
+
+<p align="center">
+  <img alt="macOS 11+" src="https://img.shields.io/badge/macOS-11%2B-E0242F?logo=apple&logoColor=white">
+  <img alt="Python 3.10 to 3.13" src="https://img.shields.io/badge/Python-3.10%E2%80%933.13-E0242F?logo=python&logoColor=white">
+  <img alt="Kokoro-82M, Apache-2.0" src="https://img.shields.io/badge/voice-Kokoro--82M-E0242F">
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot-dark.png">
+    <img src="docs/screenshot-light.png" width="900" alt="VoiceLab: voices on the left, the script and clips in the middle, sound settings on the right">
+  </picture>
+</p>
 
 A small Mac app for making voice-over clips with the Kokoro voice model. Everything runs on your Mac: no account, no internet once it's installed, and the clips are yours to use (Kokoro-82M is Apache-2.0).
+
+## Screenshots
+
+| Light | Dark |
+|---|---|
+| <img src="docs/screenshot-light.png" alt="VoiceLab in light mode"> | <img src="docs/screenshot-dark.png" alt="VoiceLab in dark mode"> |
+
+The window follows your Mac's light or dark appearance: frosted glass panels over a soft red glow.
 
 ## Install
 
@@ -44,5 +72,6 @@ To remove it completely, delete the app and that Application Support folder.
 - `engine.py`: the voice model, the voice list, pronunciations and the clips.
 - `ui/`: the interface (HTML, CSS, JS). Fonts: Instrument Sans and Source Serif 4 (SIL Open Font License).
 - `icon/`: the app icon.
+- `docs/`: the README icon and screenshots.
 
 To run it without building the app: `~/Library/Application\ Support/VoiceLab/venv/bin/python app.py`. Add `--browser` to open it in your browser instead of a window.
