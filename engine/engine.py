@@ -257,19 +257,12 @@ class Studio:
         return t
 
     def delete(self, tid):
+        """Forget a clip. The app moves the file to the Bin itself (so Finder's "Put Back" works);
+        if the file is still here, move it to the Bin from here."""
         t = self.find(tid)
         p = os.path.join(self.out_dir, t['file'])
-        trash = os.path.expanduser('~/.Trash')
-        binned = False
-        if sys.platform == 'darwin':  # into the Bin the way Finder does it, so "Put Back" works
-            try:
-                from Foundation import NSFileManager, NSURL
-                binned = NSFileManager.defaultManager().trashItemAtURL_resultingItemURL_error_(NSURL.fileURLWithPath_(p), None, None)[0]
-            except Exception:
-                binned = False
-        if binned:
-            pass
-        elif os.path.isdir(trash):
+        if os.path.exists(p):
+            trash = os.path.expanduser('~/.Trash')
             dest, i = os.path.join(trash, t['file']), 2
             while os.path.exists(dest):
                 dest = os.path.join(trash, f'{t["file"][:-4]} ({i}).wav'); i += 1
@@ -277,8 +270,6 @@ class Studio:
                 os.rename(p, dest)
             except OSError:
                 os.remove(p)
-        elif os.path.exists(p):
-            os.remove(p)
         self.takes = [x for x in self.takes if x['id'] != tid]
         self._save_takes()
 

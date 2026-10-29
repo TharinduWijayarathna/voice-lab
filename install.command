@@ -1,7 +1,8 @@
 #!/bin/bash
 # VoiceLab installer. Double-click this file in Finder (or run it in Terminal).
-# It sets up a private Python, downloads the voice model once (about 355 MB),
-# and puts "VoiceLab" in your Applications folder. Run it again any time to update the app.
+# It builds the app (Swift, needs macOS 26 and Xcode 26), sets up a private Python for the voice engine,
+# downloads the voice model once (about 355 MB), and puts "VoiceLab" in your Applications folder.
+# Run it again any time to update the app after changing its code here.
 set -euo pipefail
 
 SRC="$(cd "$(dirname "$0")" && pwd)"
@@ -16,6 +17,17 @@ fail() { printf '\n\033[31m%s\033[0m\n' "$1"; echo "Press Return to close."; rea
 trap 'fail "Setup stopped because a step failed (see the message above)."' ERR
 
 bold "Setting up VoiceLab"
+
+# 0. macOS 26 and Swift (from Xcode 26)
+MAJOR="$(sw_vers -productVersion | cut -d. -f1)"
+if [ "$MAJOR" -lt 26 ]; then
+  fail "VoiceLab needs macOS 26 (Tahoe) or later for its Liquid Glass window. This Mac has macOS $(sw_vers -productVersion)."
+fi
+if ! xcrun --find swift >/dev/null 2>&1; then
+  fail "VoiceLab is built with Swift. Install Xcode 26 from the App Store, open it once, then run this again."
+fi
+echo "Using $(xcrun swift --version 2>/dev/null | head -1)"
+
 mkdir -p "$SUPPORT" "$MODELS" "$HOME/Applications"
 
 # 1. A Python the voice model supports (3.10 to 3.13)
@@ -33,7 +45,7 @@ if [ -z "$PY" ]; then
   UV="$(command -v uv || true)"
   if [ -z "$UV" ] && [ -x "$HOME/.local/bin/uv" ]; then UV="$HOME/.local/bin/uv"; fi
   if [ -z "$UV" ]; then
-    echo "VoiceLab needs Python 3.10 to 3.13, and this Mac doesn't have one."
+    echo "VoiceLab's voice engine needs Python 3.10 to 3.13, and this Mac doesn't have one."
     printf "Install a private copy now with uv (from astral.sh, about 40 MB)? [Y/n] "
     read -r yn
     case "$yn" in [nN]*) fail "Install Python 3.12 (brew install python@3.12, or python.org), then run this again." ;; esac
@@ -45,14 +57,14 @@ if [ -z "$PY" ]; then
 fi
 echo "Using Python: $PY ($("$PY" --version))"
 
-# 2. Its own environment, with the voice model's packages and the window
+# 2. Its own environment, with the voice model's packages
 if [ ! -x "$VENV/bin/python" ] || ! ok_python "$VENV/bin/python"; then
   rm -rf "$VENV"
   "$PY" -m venv "$VENV"
 fi
-bold "Installing packages (about 200 MB, the first time)"
+bold "Installing the voice engine's packages (about 150 MB, the first time)"
 "$VENV/bin/python" -m pip install --quiet --upgrade pip
-"$VENV/bin/python" -m pip install --quiet -r "$SRC/requirements.txt"
+"$VENV/bin/python" -m pip install --quiet -r "$SRC/engine/requirements.txt"
 
 # 3. The voice model, once
 get() {  # file, minimum size in bytes
@@ -66,14 +78,18 @@ bold "Getting the voice model"
 get kokoro-v1.0.onnx 300000000
 get voices-v1.0.bin 25000000
 
-# 4. The app itself: a copy of the code, so this folder can move without breaking it
-bold "Building VoiceLab.app"
-rm -rf "$SUPPORT/app"; mkdir -p "$SUPPORT/app"
-cp -R "$SRC/app.py" "$SRC/engine.py" "$SRC/ui" "$SRC/icon" "$SUPPORT/app/"
+# 4. The app: build the Swift window, then put it together with the engine and the icon
+bold "Building VoiceLab (Swift)"
+xcrun swift build -c release --package-path "$SRC/mac"
+BIN="$(xcrun swift build -c release --package-path "$SRC/mac" --show-bin-path)/VoiceLab"
 
+bold "Putting VoiceLab in your Applications folder"
+rm -rf "$SUPPORT/app"   # the old web version kept a copy of its code here
 rm -rf "$APP"
-mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources/engine"
+cp "$BIN" "$APP/Contents/MacOS/VoiceLab"
 cp "$SRC/icon/AppIcon.icns" "$APP/Contents/Resources/AppIcon.icns"
+cp "$SRC/engine/engine.py" "$SRC/engine/server.py" "$APP/Contents/Resources/engine/"
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -81,21 +97,18 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   <key>CFBundleName</key><string>VoiceLab</string>
   <key>CFBundleDisplayName</key><string>VoiceLab</string>
   <key>CFBundleIdentifier</key><string>com.eequate.voicelab</string>
-  <key>CFBundleVersion</key><string>1.0</string>
-  <key>CFBundleShortVersionString</key><string>1.0</string>
+  <key>CFBundleVersion</key><string>2.0</string>
+  <key>CFBundleShortVersionString</key><string>2.0</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleExecutable</key><string>VoiceLab</string>
   <key>CFBundleIconFile</key><string>AppIcon</string>
-  <key>LSMinimumSystemVersion</key><string>11.0</string>
+  <key>LSMinimumSystemVersion</key><string>26.0</string>
+  <key>LSApplicationCategoryType</key><string>public.app-category.productivity</string>
   <key>NSHighResolutionCapable</key><true/>
+  <key>NSPrincipalClass</key><string>NSApplication</string>
 </dict></plist>
 PLIST
-cat > "$APP/Contents/MacOS/VoiceLab" <<LAUNCH
-#!/bin/bash
-export VOICELAB_ICON="\$(cd "\$(dirname "\$0")/../Resources" && pwd)/AppIcon.icns"
-exec "$VENV/bin/python" "$SUPPORT/app/app.py" >> "$SUPPORT/log.txt" 2>&1
-LAUNCH
-chmod +x "$APP/Contents/MacOS/VoiceLab"
+codesign --force --deep --sign - "$APP" >/dev/null 2>&1 || echo "(Couldn't sign the app for this Mac; it should still open.)"
 touch "$APP"
 
 trap - ERR

@@ -4,3 +4,7 @@ __pycache__/
 *.onnx
 voices-*.bin
 .venv/
+mac/.build/
+mac/.swiftpm/
+*.xcuserstate
+xcuserdata/
