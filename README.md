@@ -1,6 +1,6 @@
 # VoiceLab
 
-A small Mac app for making voice-over clips with the Kokoro voice (the one in the Soshable ads). Everything runs on your Mac: no account, no internet once it's installed, and the clips are yours to use (Kokoro-82M is Apache-2.0).
+A small Mac app for making voice-over clips with the Kokoro voice model. Everything runs on your Mac: no account, no internet once it's installed, and the clips are yours to use (Kokoro-82M is Apache-2.0).
 
 ## Install
 
@@ -26,7 +26,7 @@ Run `install.command` again any time to update the app after changing its code h
   - **Delete** moves the file to the Bin.
 - **Speed**, **Pause after each sentence**: change how it's read. Double-click the speed slider to reset it to normal.
 - **Blend with another voice**: mixes two voices into a new one. For example, Heart with 30% Emma.
-- **Pronunciation**: fixes words the voice says wrong. Write the word as it sounds (`ee-kwate`), or give the exact sounds between slashes (`/sˈoʊʃəbəl/`, how "Soshable" is said in the ads). The play button tries it out.
+- **Pronunciation**: fixes words the voice says wrong. Write the word as it sounds (`ee-kwate`), or give the exact sounds between slashes (`/kəkˈɔːɹoʊ/`). The play button tries it out.
 
 ## Where things live
 

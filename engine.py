@@ -28,7 +28,7 @@ GRADE = {
 }
 RANK = {g: i for i, g in enumerate(['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F+', 'F'])}
 
-DEFAULT_LEXICON = [{'word': 'Soshable', 'say': '/sˈoʊʃəbəl/'}]
+DEFAULT_LEXICON = []
 DEFAULT_SETTINGS = {
     'voice': 'af_heart', 'speed': 1.0, 'pause': 0.25, 'mix_voice': '', 'mix': 0.3,
     'split': False, 'out_dir': DEFAULT_OUT, 'draft': '',
