@@ -39,6 +39,7 @@ struct ScriptCard: View {
                     .font(scriptFont)
                     .lineSpacing(6)
                     .scrollContentBackground(.hidden)
+                    .scrollIndicators(.never)  // the scroll bar track showed as a tall glass pill on the panel
                     .focused($focused)
                     .padding(.horizontal, 24)
                     .padding(.top, 24)

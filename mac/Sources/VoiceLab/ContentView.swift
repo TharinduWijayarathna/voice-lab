@@ -25,7 +25,7 @@ struct ContentView: View {
                 .help("Show the clips folder in Finder")
             }
             ToolbarItem(placement: .primaryAction) {
-                Button { showInspector.toggle() } label: {
+                Button { withAnimation(.smooth) { showInspector.toggle() } } label: {
                     Label("Sound", systemImage: "slider.horizontal.3")
                 }
                 .help(showInspector ? "Hide sound settings" : "Show sound settings")
