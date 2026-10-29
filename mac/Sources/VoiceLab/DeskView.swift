@@ -1,16 +1,23 @@
 import SwiftUI
 
-/// The middle of the window: the script on top, the clips below, both on Liquid Glass over the red glow.
+/// The main area: the script on top, the clips below, and the sound settings on the right,
+/// all on Liquid Glass over the red glow, below the toolbar.
 struct DeskView: View {
     var body: some View {
-        GeometryReader { geo in
-            VStack(spacing: 14) {
-                ScriptCard()
-                    .frame(height: max(250, geo.size.height * 0.44))
-                ClipsCard()
+        HStack(spacing: 14) {
+            GeometryReader { geo in
+                VStack(spacing: 14) {
+                    ScriptCard()
+                        .frame(height: max(250, geo.size.height * 0.44))
+                    ClipsCard()
+                }
             }
-            .padding(16)
+            InspectorView()
+                .frame(width: 300)
+                .frame(maxHeight: .infinity, alignment: .top)
+                .glassPanel()
         }
+        .padding(16)
         .background { Backdrop() }
     }
 }

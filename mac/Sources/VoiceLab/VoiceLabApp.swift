@@ -9,10 +9,10 @@ struct VoiceLabApp: App {
         Window("VoiceLab", id: "main") {
             ContentView()
                 .environment(studio)
-                .frame(minWidth: 980, minHeight: 640)
+                .frame(minWidth: 1120, minHeight: 640)
                 .task { await studio.boot() }
         }
-        .defaultSize(width: 1280, height: 820)
+        .defaultSize(width: 1320, height: 840)
         .windowToolbarStyle(.unified)
         .commands {
             CommandGroup(replacing: .newItem) {}

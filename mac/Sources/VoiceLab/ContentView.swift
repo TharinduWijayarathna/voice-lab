@@ -2,21 +2,18 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(Studio.self) private var studio
-    @State private var showInspector = true
+    @State private var columns: NavigationSplitViewVisibility = .all
 
     var body: some View {
         @Bindable var studio = studio
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: $columns) {
             VoiceSidebar()
                 .navigationSplitViewColumnWidth(min: 210, ideal: 240, max: 320)
+                .toolbar(removing: .sidebarToggle)  // the voice list always stays open
         } detail: {
             DeskView()
         }
         .searchable(text: $studio.voiceQuery, placement: .sidebar, prompt: "Find a voice")
-        .inspector(isPresented: $showInspector) {
-            InspectorView()
-                .inspectorColumnWidth(min: 270, ideal: 300, max: 380)
-        }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button { studio.revealFolder() } label: {
@@ -24,17 +21,12 @@ struct ContentView: View {
                 }
                 .help("Show the clips folder in Finder")
             }
-            ToolbarItem(placement: .primaryAction) {
-                Button { withAnimation(.smooth) { showInspector.toggle() } } label: {
-                    Label("Sound", systemImage: "slider.horizontal.3")
-                }
-                .help(showInspector ? "Hide sound settings" : "Show sound settings")
-            }
         }
         .navigationTitle("VoiceLab")
         .navigationSubtitle(studio.subtitle)
         .tint(Brand.red)
         .overlay(alignment: .bottom) { ToastView() }
+        .onChange(of: columns) { if columns != .all { columns = .all } }
         .onChange(of: studio.settings) { studio.saveSettings() }
         .onChange(of: studio.lexicon) { studio.saveLexicon() }
         .onChange(of: studio.script) { studio.settings.draft = studio.script }
