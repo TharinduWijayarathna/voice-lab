@@ -183,7 +183,7 @@
     for (let i = 0; i < n; i++) {
       const v = P[Math.min(P.length - 1, Math.floor(i / n * P.length))];
       const bh = Math.max(1.5, Math.pow(v, .8) * (h - 2));
-      g.fillStyle = (on && i / n <= prog) ? css.getPropertyValue('--cobalt') : css.getPropertyValue('--wave');
+      g.fillStyle = (on && i / n <= prog) ? css.getPropertyValue('--accent') : css.getPropertyValue('--wave');
       g.fillRect(i * step, (h - bh) / 2, 2, bh);
     }
   }

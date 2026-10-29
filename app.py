@@ -194,7 +194,7 @@ def main():
         return
     mac_identity()
     window = webview.create_window(engine.APP_NAME, url, width=1240, height=800, min_size=(960, 620),
-                                   background_color='#E6E9ED', text_select=True)
+                                   background_color='#FBF1F1', text_select=True)
     webview.start()
     server.shutdown()
 
